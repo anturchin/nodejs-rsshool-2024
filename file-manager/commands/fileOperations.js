@@ -20,6 +20,7 @@ export const cat = async (filePath) => {
 export const add = async (fileName) => {
     try {
         await writeFile(fileName, '', { encoding: 'utf8' });
+        logger.logSuccess(messages.success());
     } catch {
         throw new Error();
     }
@@ -29,6 +30,7 @@ export const rm = async (filePath) => {
     try {
         if (await exists(filePath)) {
             await unlink(filePath);
+            logger.logSuccess(messages.success());
         } else {
             throw new Error();
         }
@@ -44,6 +46,7 @@ export const rn = async (filePath, newFileName) => {
             const newFilePath = join(fileDir, newFileName);
 
             await rename(filePath, newFilePath);
+            logger.logSuccess(messages.success());
         } else {
             throw new Error();
         }
@@ -58,6 +61,7 @@ export const cp = async (filePath, newDirPath) => {
 
     try {
         await pipeline(readStream, writeStream);
+        logger.logSuccess(messages.success());
     } catch {
         throw new Error();
     }
@@ -71,6 +75,7 @@ export const mv = async (filePath, newDirPath) => {
     try {
         await pipeline(readStream, writeStream);
         await unlink(filePath);
+        logger.logSuccess(messages.success());
     } catch {
         throw new Error();
     }

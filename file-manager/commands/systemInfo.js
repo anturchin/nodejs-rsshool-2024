@@ -1,4 +1,5 @@
 import os from 'node:os';
+
 import { logger } from '../utils/logger.js';
 
 export const getOSInfo = (command) => {

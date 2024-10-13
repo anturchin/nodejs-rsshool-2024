@@ -17,7 +17,7 @@ export const calculateHash = async (filePath) => {
     try {
         await pipeline(readStream, hash);
         const hashValue = hash.digest('hex');
-        logger.logInfo(hashValue);
+        logger.logSuccess(hashValue);
     } catch {
         throw new Error();
     }

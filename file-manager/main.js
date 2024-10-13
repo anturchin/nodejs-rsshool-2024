@@ -10,6 +10,7 @@ import { ls } from './commands/fileManager.js';
 import { add, cat, cp, mv, rm, rn } from './commands/fileOperations.js';
 import { getOSInfo } from './commands/systemInfo.js';
 import { calculateHash } from './commands/hash.js';
+import { compressFile, decompressFile } from './commands/compression.js';
 
 const rl = createInterface({
     input: stdin,
@@ -70,6 +71,18 @@ rl.on('line', async (line) => {
             }
             case '.exit': {
                 closeSession(rl);
+                break;
+            }
+            case 'compress': {
+                await compressFile(args[0], args[1]);
+                break;
+            }
+            case 'decompress': {
+                await decompressFile(args[0], args[1]);
+                break;
+            }
+            case 'clear': {
+                console.clear();
                 break;
             }
             default: {
