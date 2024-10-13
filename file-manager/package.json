@@ -1,10 +1,10 @@
 {
     "name": "file-manager",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "main.js",
     "type": "module",
     "scripts": {
-        "start": "node index.js",
+        "start": "node main.js",
         "lint": "eslint . ",
         "lint:fix": "eslint . --fix",
         "format:fix": "prettier --write .",
