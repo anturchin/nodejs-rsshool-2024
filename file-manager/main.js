@@ -7,6 +7,7 @@ import { closeSession, getCurrentlyPath, getUsername } from './utils/helpers.js'
 import { parseInput } from './utils/inputParser.js';
 import { cd, up } from './commands/navigation.js';
 import { ls } from './commands/fileManager.js';
+import { cat } from './commands/fileOperations.js';
 
 const rl = createInterface({
     input: stdin,
@@ -31,6 +32,10 @@ rl.on('line', async (line) => {
             }
             case 'ls': {
                 await ls();
+                break;
+            }
+            case 'cat': {
+                await cat(args[0]);
                 break;
             }
             case '.exit': {

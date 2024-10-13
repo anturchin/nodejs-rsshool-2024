@@ -1,6 +1,5 @@
 import { readdir } from 'node:fs/promises';
 import { cwd } from 'node:process';
-import { extname } from 'node:path';
 
 import { logger } from '../utils/logger.js';
 
@@ -17,9 +16,9 @@ export const ls = async () => {
     try {
         const files = await readdir(cwd(), { withFileTypes: true });
 
-        const fileList = files.map((file, index) => {
+        const fileList = files.map((file) => {
             const fileType = file.isDirectory() ? 'Directory' : 'File';
-            const fileName = file.name + (file.isFile() ? extname(file.name) : '');
+            const fileName = file.name;
 
             return {
                 Name: fileName,
