@@ -20,6 +20,11 @@ export const closeSession = (readline) => {
     exit(0);
 };
 
+export const parseInput = (input) => {
+    const [command, ...args] = input.trim().split(' ');
+    return { command, args };
+};
+
 const toBool = [() => true, () => false];
 
 export const exists = (path) => {

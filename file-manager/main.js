@@ -4,7 +4,7 @@ import { stdin, stdout } from 'node:process';
 import { logger } from './utils/logger.js';
 import { messages } from './constants/index.js';
 import { closeSession, getCurrentlyPath, getUsername } from './utils/helpers.js';
-import { parseInput } from './utils/inputParser.js';
+import { parseInput } from './utils/helpers.js';
 import { cd, up } from './commands/navigation.js';
 import { ls } from './commands/fileManager.js';
 import { add, cat, cp, mv, rm, rn } from './commands/fileOperations.js';
