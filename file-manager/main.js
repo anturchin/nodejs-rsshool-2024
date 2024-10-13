@@ -8,6 +8,7 @@ import { parseInput } from './utils/inputParser.js';
 import { cd, up } from './commands/navigation.js';
 import { ls } from './commands/fileManager.js';
 import { add, cat, cp, mv, rm, rn } from './commands/fileOperations.js';
+import { getOSInfo } from './commands/systemInfo.js';
 
 const rl = createInterface({
     input: stdin,
@@ -56,6 +57,10 @@ rl.on('line', async (line) => {
             }
             case 'mv': {
                 await mv(args[0], args[1]);
+                break;
+            }
+            case 'os': {
+                getOSInfo(args[0]);
                 break;
             }
             case '.exit': {
