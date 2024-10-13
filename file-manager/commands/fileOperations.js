@@ -1,4 +1,5 @@
 import { createReadStream } from 'node:fs';
+import { writeFile, unlink } from 'node:fs/promises';
 
 import { logger } from '../utils/logger.js';
 import { exists } from '../utils/helpers.js';
@@ -10,6 +11,26 @@ export const cat = async (filePath) => {
         stream.on('data', (chunk) => logger.logInfo(chunk));
         stream.on('error', () => logger.logError(messages.failed()));
     } else {
+        throw new Error();
+    }
+};
+
+export const add = async (fileName) => {
+    try {
+        await writeFile(fileName, '', { encoding: 'utf8' });
+    } catch {
+        throw new Error();
+    }
+};
+
+export const rm = async (filePath) => {
+    try {
+        if (await exists(filePath)) {
+            await unlink(filePath);
+        } else {
+            throw new Error();
+        }
+    } catch {
         throw new Error();
     }
 };
