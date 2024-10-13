@@ -6,6 +6,7 @@ import { messages } from './constants/index.js';
 import { closeSession, getCurrentlyPath, getUsername } from './utils/helpers.js';
 import { parseInput } from './utils/inputParser.js';
 import { cd, up } from './commands/navigation.js';
+import { ls } from './commands/fileManager.js';
 
 const rl = createInterface({
     input: stdin,
@@ -26,6 +27,10 @@ rl.on('line', async (line) => {
             }
             case 'cd': {
                 cd(args[0]);
+                break;
+            }
+            case 'ls': {
+                await ls();
                 break;
             }
             case '.exit': {
