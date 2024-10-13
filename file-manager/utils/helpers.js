@@ -1,22 +1,23 @@
 import { access, constants } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
+import { exit, cwd, argv } from 'node:process';
 
 import { logger } from './logger.js';
 import { messages } from '../constants/index.js';
 
 export const getUsername = () => {
-    const args = process.argv.slice(2);
+    const args = argv.slice(2);
     const usernameArgv = args.find((arg) => arg.startsWith('--username'));
     return usernameArgv ? usernameArgv.split('=')[1] : 'Anonymous';
 };
 
-export const getCurrentlyPath = () => process.cwd();
+export const getCurrentlyPath = () => cwd();
 
 export const closeSession = (readline) => {
     logger.logInfo(messages.goodbye(getUsername()));
     readline.close();
-    process.exit(0);
+    exit(0);
 };
 
 const toBool = [() => true, () => false];

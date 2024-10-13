@@ -1,13 +1,15 @@
-import readline from 'node:readline';
+import { createInterface } from 'node:readline';
+import { stdin, stdout } from 'node:process';
 
 import { logger } from './utils/logger.js';
 import { messages } from './constants/index.js';
 import { closeSession, getCurrentlyPath, getUsername } from './utils/helpers.js';
 import { parseInput } from './utils/inputParser.js';
+import { up } from './commands/navigation.js';
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+const rl = createInterface({
+    input: stdin,
+    output: stdout,
 });
 
 logger.logInfo(messages.welcome(getUsername()));
@@ -18,6 +20,10 @@ rl.on('line', async (line) => {
 
     try {
         switch (command) {
+            case 'up': {
+                up();
+                break;
+            }
             case '.exit': {
                 closeSession(rl);
                 break;
