@@ -1,4 +1,5 @@
-import { createReadStream } from 'node:fs';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
 import { writeFile, unlink, rename } from 'node:fs/promises';
 import { join } from 'path';
 
@@ -46,6 +47,28 @@ export const rn = async (filePath, newFileName) => {
         } else {
             throw new Error();
         }
+    } catch {
+        throw new Error();
+    }
+};
+
+export const cp = async (filePath, newDirPath) => {
+    const fileExists = await exists(filePath);
+    const dirExists = await exists(newDirPath);
+    if (!fileExists) {
+        throw new Error();
+    }
+    if (!dirExists) {
+        throw new Error();
+    }
+
+    const fileName = filePath.split('/').pop();
+    const newFilePath = join(newDirPath, fileName);
+
+    const readStream = createReadStream(fileName);
+    const writeStream = createWriteStream(newFilePath);
+    try {
+        await pipeline(readStream, writeStream);
     } catch {
         throw new Error();
     }
