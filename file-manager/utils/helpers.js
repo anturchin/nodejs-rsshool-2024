@@ -1,7 +1,7 @@
 import { access, constants } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
 import { exit, cwd, argv } from 'node:process';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { join } from 'node:path';
 
 import { logger } from './logger.js';
 import { messages } from '../constants/index.js';
@@ -26,10 +26,22 @@ export const exists = (path) => {
     return access(path, constants.R_OK | constants.W_OK).then(...toBool);
 };
 
-export const getFilename = (url) => {
-    return fileURLToPath(url);
+export const fileOrDirExists = async (filePath, newDirPath) => {
+    const fileExists = await exists(filePath);
+    const dirExists = await exists(newDirPath);
+    if (!fileExists) {
+        throw new Error();
+    }
+    if (!dirExists) {
+        throw new Error();
+    }
 };
 
-export const getDirname = (url) => {
-    return dirname(fileURLToPath(url));
+export const createStream = (filePath, newDirPath) => {
+    const fileName = filePath.split('/').pop();
+    const newFilePath = join(newDirPath, fileName);
+
+    const readStream = createReadStream(filePath);
+    const writeStream = createWriteStream(newFilePath);
+    return { readStream, writeStream };
 };

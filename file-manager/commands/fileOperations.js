@@ -1,10 +1,10 @@
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createReadStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { writeFile, unlink, rename } from 'node:fs/promises';
-import { join } from 'path';
+import { join } from 'node:path';
 
 import { logger } from '../utils/logger.js';
-import { exists } from '../utils/helpers.js';
+import { createStream, exists, fileOrDirExists } from '../utils/helpers.js';
 import { messages } from '../constants/index.js';
 
 export const cat = async (filePath) => {
@@ -53,22 +53,24 @@ export const rn = async (filePath, newFileName) => {
 };
 
 export const cp = async (filePath, newDirPath) => {
-    const fileExists = await exists(filePath);
-    const dirExists = await exists(newDirPath);
-    if (!fileExists) {
-        throw new Error();
-    }
-    if (!dirExists) {
-        throw new Error();
-    }
+    await fileOrDirExists(filePath, newDirPath);
+    const { readStream, writeStream } = createStream(filePath, newDirPath);
 
-    const fileName = filePath.split('/').pop();
-    const newFilePath = join(newDirPath, fileName);
-
-    const readStream = createReadStream(fileName);
-    const writeStream = createWriteStream(newFilePath);
     try {
         await pipeline(readStream, writeStream);
+    } catch {
+        throw new Error();
+    }
+};
+
+export const mv = async (filePath, newDirPath) => {
+    await fileOrDirExists(filePath, newDirPath);
+
+    const { readStream, writeStream } = createStream(filePath, newDirPath);
+
+    try {
+        await pipeline(readStream, writeStream);
+        await unlink(filePath);
     } catch {
         throw new Error();
     }
