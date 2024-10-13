@@ -9,3 +9,11 @@ export const up = () => {
         chdir(parentDir);
     }
 };
+
+export const cd = (path) => {
+    try {
+        chdir(path);
+    } catch {
+        throw new Error();
+    }
+};

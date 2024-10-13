@@ -5,7 +5,7 @@ import { logger } from './utils/logger.js';
 import { messages } from './constants/index.js';
 import { closeSession, getCurrentlyPath, getUsername } from './utils/helpers.js';
 import { parseInput } from './utils/inputParser.js';
-import { up } from './commands/navigation.js';
+import { cd, up } from './commands/navigation.js';
 
 const rl = createInterface({
     input: stdin,
@@ -16,12 +16,16 @@ logger.logInfo(messages.welcome(getUsername()));
 logger.logSuccess(messages.currently(getCurrentlyPath()));
 
 rl.on('line', async (line) => {
-    const { command } = parseInput(line);
+    const { command, args } = parseInput(line);
 
     try {
         switch (command) {
             case 'up': {
                 up();
+                break;
+            }
+            case 'cd': {
+                cd(args[0]);
                 break;
             }
             case '.exit': {
