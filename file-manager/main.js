@@ -40,7 +40,6 @@ rl.on('line', async (line) => {
     } catch {
         logger.logError(messages.failed());
     }
-    logger.logInfo(messages.currently(getCurrentlyPath()));
 });
 
 rl.on('SIGINT', () => {
