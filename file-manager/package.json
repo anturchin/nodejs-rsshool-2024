@@ -1,0 +1,31 @@
+{
+    "name": "file-manager",
+    "version": "1.0.0",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node index.js",
+        "lint": "eslint . ",
+        "lint:fix": "eslint . --fix",
+        "format:fix": "prettier --write .",
+        "pp": "npm run format:fix && npm run lint:fix"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/anturchin/nodejs-rsshool-2024.git"
+    },
+    "author": "Andrey Turchin",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/anturchin/nodejs-rsshool-2024/issues"
+    },
+    "homepage": "https://github.com/anturchin/nodejs-rsshool-2024#readme",
+    "description": "",
+    "devDependencies": {
+        "@eslint/js": "^9.12.0",
+        "eslint": "^9.12.0",
+        "eslint-config-prettier": "^9.1.0",
+        "globals": "^15.11.0",
+        "prettier": "3.3.3"
+    }
+}
