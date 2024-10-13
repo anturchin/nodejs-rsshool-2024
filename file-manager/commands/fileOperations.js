@@ -1,5 +1,6 @@
 import { createReadStream } from 'node:fs';
-import { writeFile, unlink } from 'node:fs/promises';
+import { writeFile, unlink, rename } from 'node:fs/promises';
+import { join } from 'path';
 
 import { logger } from '../utils/logger.js';
 import { exists } from '../utils/helpers.js';
@@ -27,6 +28,21 @@ export const rm = async (filePath) => {
     try {
         if (await exists(filePath)) {
             await unlink(filePath);
+        } else {
+            throw new Error();
+        }
+    } catch {
+        throw new Error();
+    }
+};
+
+export const rn = async (filePath, newFileName) => {
+    try {
+        if (await exists(filePath)) {
+            const fileDir = filePath.split('/').slice(0, -1).join('/');
+            const newFilePath = join(fileDir, newFileName);
+
+            await rename(filePath, newFilePath);
         } else {
             throw new Error();
         }
