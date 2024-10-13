@@ -9,6 +9,7 @@ import { cd, up } from './commands/navigation.js';
 import { ls } from './commands/fileManager.js';
 import { add, cat, cp, mv, rm, rn } from './commands/fileOperations.js';
 import { getOSInfo } from './commands/systemInfo.js';
+import { calculateHash } from './commands/hash.js';
 
 const rl = createInterface({
     input: stdin,
@@ -61,6 +62,10 @@ rl.on('line', async (line) => {
             }
             case 'os': {
                 getOSInfo(args[0]);
+                break;
+            }
+            case 'hash': {
+                await calculateHash(args[0]);
                 break;
             }
             case '.exit': {
