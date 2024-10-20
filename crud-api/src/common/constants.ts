@@ -4,4 +4,5 @@ export const errorMessage = {
     REQUIRED_FIELDS: 'Missing required fields',
     INVALID_UUID: 'Invalid UUID',
     BAD_REQUEST: 'Body is required',
+    SERVER_ERROR: 'Server error',
 };

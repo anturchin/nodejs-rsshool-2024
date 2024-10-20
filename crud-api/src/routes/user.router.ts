@@ -13,18 +13,43 @@ export const userRouter = async (req: IncomingMessage, res: ServerResponse) => {
     const userIdMatch = url?.match(/^\/api\/users\/([a-z0-9-]+)$/);
 
     if (url === '/api/users' && method === 'GET') {
-        await getUsers(req, res);
+        try {
+            await getUsers(req, res);
+        } catch {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: errorMessage.SERVER_ERROR }));
+        }
     } else if (userIdMatch && method === 'GET') {
         const userId = userIdMatch[1];
-        await getUser(req, res, userId);
+        try {
+            await getUser(req, res, userId);
+        } catch {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: errorMessage.SERVER_ERROR }));
+        }
     } else if (url === '/api/users' && method === 'POST') {
-        await createUser(req, res);
+        try {
+            await createUser(req, res);
+        } catch {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: errorMessage.SERVER_ERROR }));
+        }
     } else if (userIdMatch && method === 'PUT') {
         const userId = userIdMatch[1];
-        await updateUser(req, res, userId);
+        try {
+            await updateUser(req, res, userId);
+        } catch {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: errorMessage.SERVER_ERROR }));
+        }
     } else if (userIdMatch && method === 'DELETE') {
         const userId = userIdMatch[1];
-        await deleteUser(req, res, userId);
+        try {
+            await deleteUser(req, res, userId);
+        } catch {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: errorMessage.SERVER_ERROR }));
+        }
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: errorMessage.ROUTE_NOT_FOUND }));
