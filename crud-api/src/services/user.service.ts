@@ -31,7 +31,11 @@ export const deleteUserService = async (id: string): Promise<boolean> => {
 export const updateUserService = async (id: string, data: User): Promise<User | null> => {
     const index = users.findIndex((user) => user.id === id);
     if (index !== -1) {
-        const updatedUser: User = { ...users[index], ...data };
+        const updatedUser: User = {
+            ...users[index],
+            ...data,
+            hobbies: data.hobbies ? [...data.hobbies] : users[index].hobbies,
+        };
         users[index] = updatedUser;
         notifyWorkers();
         return updatedUser;
