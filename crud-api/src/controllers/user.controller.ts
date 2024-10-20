@@ -41,15 +41,20 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
     });
 
     req.on('end', async () => {
-        const { username, age, hobbies } = JSON.parse(body) as User;
-        if (!username || !age || !hobbies.length) {
+        try {
+            const { username, age, hobbies } = JSON.parse(body) as User;
+            if (!username || !age || !hobbies.length) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ error: errorMessage.REQUIRED_FIELDS }));
+            }
+
+            const user = await createUserService({ id: uuidv4(), username, age, hobbies });
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(user));
+        } catch {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ error: errorMessage.REQUIRED_FIELDS }));
         }
-
-        const user = await createUserService({ id: uuidv4(), username, age, hobbies });
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(user));
     });
 };
 
@@ -65,13 +70,18 @@ export const updateUser = async (req: IncomingMessage, res: ServerResponse, user
     });
 
     req.on('end', async () => {
-        const user = await updateUserService(userId, JSON.parse(body));
-        if (user) {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(user));
-        } else {
-            res.writeHead(404, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: errorMessage.USER_NOT_FOUND }));
+        try {
+            const user = await updateUserService(userId, JSON.parse(body));
+            if (user) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(user));
+            } else {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: errorMessage.USER_NOT_FOUND }));
+            }
+        } catch {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: errorMessage.BAD_REQUEST }));
         }
     });
 };

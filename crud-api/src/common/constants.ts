@@ -3,4 +3,5 @@ export const errorMessage = {
     USER_NOT_FOUND: 'User not found',
     REQUIRED_FIELDS: 'Missing required fields',
     INVALID_UUID: 'Invalid UUID',
+    BAD_REQUEST: 'Body is required',
 };
