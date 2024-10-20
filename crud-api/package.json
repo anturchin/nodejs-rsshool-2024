@@ -2,10 +2,10 @@
     "name": "crud-api",
     "version": "1.0.0",
     "main": "index.js",
-    "type": "module",
     "scripts": {
         "start:dev": "nodemon",
         "start:prod": "tsc && node ./dist/main.js",
+        "start:multi": "tsc && node ./dist/cluster.js",
         "lint": "eslint . --fix",
         "format": "prettier --write .",
         "type-check": "tsc --noEmit",
@@ -26,7 +26,7 @@
         "nodemon": "^3.1.7",
         "prettier": "3.3.3",
         "ts-jest": "^29.2.5",
-        "tsx": "^4.19.1",
+        "ts-node": "^10.9.2",
         "typescript": "^5.6.3",
         "typescript-eslint": "^8.10.0"
     },

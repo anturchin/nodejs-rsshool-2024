@@ -1,9 +1,9 @@
-import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import eslintConfigPrettier from 'eslint-config-prettier';
+const globals = require('globals');
+const pluginJs = require('@eslint/js');
+const tseslint = require('typescript-eslint');
+const eslintConfigPrettier = require('eslint-config-prettier');
 
-export default [
+module.exports = [
     {
         files: ['**/*.{js,mjs,cjs,ts}'],
     },
