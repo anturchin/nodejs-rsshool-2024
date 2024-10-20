@@ -4,6 +4,7 @@ import cluster from 'node:cluster';
 import os from 'node:os';
 
 import { logger } from './common/logger';
+import { userRouter } from './routes/user.router';
 
 const start = () => {
     const PORT = process.env.PORT || '3000';
@@ -21,9 +22,7 @@ const start = () => {
             cluster.fork();
         });
     } else {
-        http.createServer((_, res) => {
-            res.end(`hello from nodejs!!!`);
-        }).listen(PORT, () =>
+        http.createServer(userRouter).listen(PORT, () =>
             logger.info(`[PID: ${pid}] Worker is running on http://localhost:${PORT}`)
         );
     }
