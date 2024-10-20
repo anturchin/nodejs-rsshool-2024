@@ -80,9 +80,8 @@ The application can be run in different modes depending on your environment.
 - The project follows a simple folder structure:
     ```bash
     src/
-    ├── common/           # Common utilities (logger, constants, heplpers.)
+    ├── common/           # Common utilities (logger, constants, interface.)
     ├── controllers/      # Controllers for handling requests
-    ├── db/               # In memory database
     ├── models/           # Models representing data entities
     ├── routes/           # Route definitions
     ├── services/         # Business logic services
