@@ -4,6 +4,7 @@ import { GameState, Message, PlayerReqResponse, PlayerResResponse } from '../com
 import { Logger } from '../common/logger';
 import { createPlayer } from './create-player.handle';
 import { sendUpdateRoom } from './send-update-room.handle';
+import { sendUpdateWinners } from './send-update-winners.handle';
 
 type RegistrationProp = {
     ws: WebSocket;
@@ -44,6 +45,7 @@ export const registrationHandle = ({
 
         createPlayer({ name, password, gameState, ws, logger, connection });
         sendUpdateRoom({ logger, connection, gameState });
+        sendUpdateWinners({ logger, connection, gameState });
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
     }

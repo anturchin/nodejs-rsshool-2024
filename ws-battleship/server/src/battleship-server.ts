@@ -29,7 +29,7 @@ export class BattleShipGameServer {
     }
 
     private onConnection(ws: WebSocket): void {
-        this.logger.info('Новый клиент подключен');
+        this.logger.info(`Новый клиент подключен`);
 
         ws.on('message', (message) => {
             const parsedMessage: Message = JSON.parse(message.toString());
@@ -54,9 +54,6 @@ export class BattleShipGameServer {
                 });
                 break;
             }
-            case 'update_winners': {
-                break;
-            }
             case 'create_room': {
                 const playerId = this.connectedClients.get(ws);
                 if (!playerId) {
@@ -72,12 +69,7 @@ export class BattleShipGameServer {
                 break;
             }
             case 'add_user_to_room': {
-                break;
-            }
-            case 'create_game': {
-                break;
-            }
-            case 'update_room': {
+                console.dir({ message }, { depth: true });
                 break;
             }
             case 'add_ships': {
@@ -90,12 +82,6 @@ export class BattleShipGameServer {
                 break;
             }
             case 'randomAttack': {
-                break;
-            }
-            case 'turn': {
-                break;
-            }
-            case 'finish': {
                 break;
             }
             case 'single_play': {

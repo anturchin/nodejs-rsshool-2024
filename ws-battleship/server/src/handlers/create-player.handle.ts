@@ -44,9 +44,7 @@ export const createPlayer = ({
         };
         logger.info(`Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`);
 
-        for (const client of connection.keys()) {
-            client.send(JSON.stringify(res));
-        }
+        ws.send(JSON.stringify(res));
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
     }

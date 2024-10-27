@@ -16,13 +16,15 @@ export const sendUpdateRoom = ({ connection, gameState, logger }: UpdateRoomProp
 
     const updateRoomData = {
         type: 'update_room',
-        data: JSON.stringify(roomsWithSinglePlayer.map((room: Room) => ({
-            roomId: room.id,
-            roomUsers: room.players.map((player) => ({
-                name: player.name,
-                index: player.id,
-            })),
-        }))),
+        data: JSON.stringify(
+            roomsWithSinglePlayer.map((room: Room) => ({
+                roomId: room.id,
+                roomUsers: room.players.map((player) => ({
+                    name: player.name,
+                    index: player.id,
+                })),
+            }))
+        ),
         id: 0,
     };
 
