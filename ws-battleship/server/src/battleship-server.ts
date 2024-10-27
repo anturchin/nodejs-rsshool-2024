@@ -63,7 +63,12 @@ export class BattleShipGameServer {
                     this.logger.warn('Не удалось найти игрока для создания комнаты.');
                     return;
                 }
-                createRoot({ ws, playerId, logger: this.logger, gameState: this.gameState });
+                createRoot({
+                    connection: this.connectedClients,
+                    playerId,
+                    logger: this.logger,
+                    gameState: this.gameState,
+                });
                 break;
             }
             case 'add_user_to_room': {

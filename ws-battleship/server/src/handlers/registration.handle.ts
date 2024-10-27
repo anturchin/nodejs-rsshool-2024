@@ -1,8 +1,9 @@
 import WebSocket from 'ws';
-import { v4 as uuidv4 } from 'uuid';
 
-import { GameState, Message, Player } from '../common/interfaces';
+import { GameState, Message, PlayerReqResponse, PlayerResResponse } from '../common/interfaces';
 import { Logger } from '../common/logger';
+import { createPlayer } from './create-player.handle';
+import { sendUpdateRoom } from './send-update-room.handle';
 
 type RegistrationProp = {
     ws: WebSocket;
@@ -10,55 +11,6 @@ type RegistrationProp = {
     message: Message;
     gameState: GameState;
     logger: Logger;
-};
-
-type CreateUser = {
-    name: string;
-    password: string;
-    gameState: GameState;
-    ws: WebSocket;
-    connection: Map<WebSocket, string>;
-    logger: Logger;
-};
-
-type ResResponse = {
-    type: 'reg';
-    data: string;
-    id: number;
-};
-
-type ReqResponse = {
-    name: string;
-    password: string;
-};
-
-const createPlayer = ({ name, password, gameState, ws, logger, connection }: CreateUser): void => {
-    try {
-        const newPlayer: Player = {
-            id: uuidv4(),
-            name: name,
-            password: password,
-            wins: 0,
-        };
-
-        gameState.players.set(newPlayer.id, newPlayer);
-        connection.set(ws, newPlayer.id);
-
-        const res: ResResponse = {
-            type: 'reg',
-            data: JSON.stringify({
-                name,
-                index: newPlayer.id,
-                error: false,
-                errorText: `Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`,
-            }),
-            id: 0,
-        };
-        logger.info(`Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`);
-        ws.send(JSON.stringify(res));
-    } catch (e) {
-        if (e instanceof Error) logger.error(e.message);
-    }
 };
 
 export const registrationHandle = ({
@@ -69,12 +21,12 @@ export const registrationHandle = ({
     connection,
 }: RegistrationProp): void => {
     try {
-        const parsedMessage: ReqResponse = JSON.parse(message.data);
+        const parsedMessage: PlayerReqResponse = JSON.parse(message.data);
         const { password, name } = parsedMessage;
 
         for (const player of gameState.players.values()) {
             if (player.name === name) {
-                const res: ResResponse = {
+                const res: PlayerResResponse = {
                     type: 'reg',
                     data: JSON.stringify({
                         name,
@@ -91,6 +43,7 @@ export const registrationHandle = ({
         }
 
         createPlayer({ name, password, gameState, ws, logger, connection });
+        sendUpdateRoom({ logger, connection, gameState });
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
     }

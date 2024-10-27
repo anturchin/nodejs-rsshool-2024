@@ -3,20 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { GameState, Player, Room } from '../common/interfaces';
 import { Logger } from '../common/logger';
+import { sendUpdateRoom } from './send-update-room.handle';
 
 type CreateRoomProps = {
     playerId: string;
     gameState: GameState;
-    ws: WebSocket;
     logger: Logger;
+    connection: Map<WebSocket, string>;
 };
 
-type ResResponse = {
-    type: string;
-    data: string;
-    id: number;
-};
-export const createRoot = ({ ws, gameState, playerId, logger }: CreateRoomProps): void => {
+export const createRoot = ({ connection, gameState, playerId, logger }: CreateRoomProps): void => {
     try {
         const newRoom: Room = {
             id: uuidv4(),
@@ -29,21 +25,7 @@ export const createRoot = ({ ws, gameState, playerId, logger }: CreateRoomProps)
         gameState.rooms.set(newRoom.id, newRoom);
         logger.info(`Комната создана с ID: ${newRoom.id} игроком c ID: ${playerId}`);
 
-        const updateData: ResResponse = {
-            type: 'update_room',
-            data: JSON.stringify([
-                {
-                    roomId: newRoom.id,
-                    roomUsers: newRoom.players.map((player) => ({
-                        name: player.name,
-                        index: player.id,
-                    })),
-                },
-            ]),
-            id: 0,
-        };
-
-        ws.send(JSON.stringify(updateData));
+        sendUpdateRoom({ logger, gameState, connection });
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
     }

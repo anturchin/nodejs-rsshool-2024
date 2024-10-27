@@ -61,3 +61,14 @@ export interface Message {
         | 'single_play';
     data: string;
 }
+
+export type PlayerResResponse = {
+    type: 'reg';
+    data: string;
+    id: number;
+};
+
+export type PlayerReqResponse = {
+    name: string;
+    password: string;
+};
