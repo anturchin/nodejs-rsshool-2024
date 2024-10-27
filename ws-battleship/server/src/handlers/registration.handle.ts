@@ -6,6 +6,7 @@ import { Logger } from '../common/logger';
 
 type RegistrationProp = {
     ws: WebSocket;
+    connection: Map<WebSocket, string>;
     message: Message;
     gameState: GameState;
     logger: Logger;
@@ -16,6 +17,7 @@ type CreateUser = {
     password: string;
     gameState: GameState;
     ws: WebSocket;
+    connection: Map<WebSocket, string>;
     logger: Logger;
 };
 
@@ -30,7 +32,7 @@ type ReqResponse = {
     password: string;
 };
 
-const createPlayer = ({ name, password, gameState, ws, logger }: CreateUser): void => {
+const createPlayer = ({ name, password, gameState, ws, logger, connection }: CreateUser): void => {
     try {
         const newPlayer: Player = {
             id: uuidv4(),
@@ -40,6 +42,7 @@ const createPlayer = ({ name, password, gameState, ws, logger }: CreateUser): vo
         };
 
         gameState.players.set(newPlayer.id, newPlayer);
+        connection.set(ws, newPlayer.id);
 
         const res: ResResponse = {
             type: 'reg',
@@ -58,7 +61,13 @@ const createPlayer = ({ name, password, gameState, ws, logger }: CreateUser): vo
     }
 };
 
-export const handleRegistration = ({ ws, message, gameState, logger }: RegistrationProp): void => {
+export const registrationHandle = ({
+    ws,
+    message,
+    gameState,
+    logger,
+    connection,
+}: RegistrationProp): void => {
     try {
         const parsedMessage: ReqResponse = JSON.parse(message.data);
         const { password, name } = parsedMessage;
@@ -81,7 +90,7 @@ export const handleRegistration = ({ ws, message, gameState, logger }: Registrat
             }
         }
 
-        createPlayer({ name, password, gameState, ws, logger });
+        createPlayer({ name, password, gameState, ws, logger, connection });
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
     }

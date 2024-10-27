@@ -2,12 +2,14 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 import { GameState, Message, Player, Room } from './common/interfaces';
 import { Logger } from './common/logger';
-import { handleRegistration } from './handlers/handleRegistration';
+import { registrationHandle } from './handlers/registration.handle';
+import { createRoot } from './handlers/create-room.handle';
 
 export class BattleShipGameServer {
     private readonly wss: WebSocketServer;
     private readonly gameState: GameState;
     private readonly logger: Logger;
+    private readonly connectedClients: Map<WebSocket, string>;
 
     constructor(port: number, logger: Logger) {
         this.wss = new WebSocketServer({ port });
@@ -17,6 +19,7 @@ export class BattleShipGameServer {
             winnerTable: [],
         };
         this.logger = logger;
+        this.connectedClients = new Map();
         this.connect(port);
     }
 
@@ -35,19 +38,32 @@ export class BattleShipGameServer {
 
         ws.on('close', () => {
             this.logger.info('Соединение закрыто');
+            this.connectedClients.delete(ws);
         });
     }
 
     private handleRequest(ws: WebSocket, message: Message): void {
         switch (message.type) {
             case 'reg': {
-                handleRegistration({ ws, message, logger: this.logger, gameState: this.gameState });
+                registrationHandle({
+                    ws,
+                    message,
+                    logger: this.logger,
+                    gameState: this.gameState,
+                    connection: this.connectedClients,
+                });
                 break;
             }
             case 'update_winners': {
                 break;
             }
             case 'create_room': {
+                const playerId = this.connectedClients.get(ws);
+                if (!playerId) {
+                    this.logger.warn('Не удалось найти игрока для создания комнаты.');
+                    return;
+                }
+                createRoot({ ws, playerId, logger: this.logger, gameState: this.gameState });
                 break;
             }
             case 'add_user_to_room': {
