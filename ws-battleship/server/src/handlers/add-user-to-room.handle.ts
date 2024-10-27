@@ -3,6 +3,7 @@ import WebSocket from 'ws';
 import { GameState, Message, UserToRoom } from '../common/interfaces';
 import { Logger } from '../common/logger';
 import { sendUpdateRoom } from './send-update-room.handle';
+import { createGame } from './create-game.handle';
 
 type AddUserToRoomProps = {
     ws: WebSocket;
@@ -22,8 +23,8 @@ export const addUserToRoom = ({
     try {
         const { indexRoom } = JSON.parse(message.data) as UserToRoom;
 
-        const playerId = connection.get(ws);
-        if (!playerId) {
+        const idPlayer = connection.get(ws);
+        if (!idPlayer) {
             logger.warn('Игрок не найден при попытке добавить в комнату.');
             return;
         }
@@ -34,16 +35,17 @@ export const addUserToRoom = ({
             return;
         }
 
-        if (room.players.some((player) => player.id === playerId)) {
-            logger.warn(`Игрок с ID: ${playerId} уже находится в комнате с ID: ${indexRoom}.`);
+        if (room.players.some((player) => player.id === idPlayer)) {
+            logger.warn(`Игрок с ID: ${idPlayer} уже находится в комнате с ID: ${indexRoom}.`);
             return;
         }
 
-        const player = gameState.players.get(playerId);
+        const player = gameState.players.get(idPlayer);
         if (player) {
             room.players.push(player);
-            logger.info(`Игрок с ID: ${playerId} добавлен в комнату с ID: ${indexRoom}.`);
+            logger.info(`Игрок с ID: ${idPlayer} добавлен в комнату с ID: ${indexRoom}.`);
             sendUpdateRoom({ logger, connection, gameState });
+            createGame({ room, idPlayer, connection, logger });
         }
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
