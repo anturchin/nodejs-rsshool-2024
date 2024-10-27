@@ -72,3 +72,7 @@ export type PlayerReqResponse = {
     name: string;
     password: string;
 };
+
+export type UserToRoom = {
+    indexRoom: string;
+};

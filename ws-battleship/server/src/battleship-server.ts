@@ -4,6 +4,7 @@ import { GameState, Message, Player, Room } from './common/interfaces';
 import { Logger } from './common/logger';
 import { registrationHandle } from './handlers/registration.handle';
 import { createRoot } from './handlers/create-room.handle';
+import { addUserToRoom } from './handlers/add-user-to-room.handle';
 
 export class BattleShipGameServer {
     private readonly wss: WebSocketServer;
@@ -69,13 +70,16 @@ export class BattleShipGameServer {
                 break;
             }
             case 'add_user_to_room': {
-                console.dir({ message }, { depth: true });
+                addUserToRoom({
+                    ws,
+                    logger: this.logger,
+                    message,
+                    connection: this.connectedClients,
+                    gameState: this.gameState,
+                });
                 break;
             }
             case 'add_ships': {
-                break;
-            }
-            case 'start_game': {
                 break;
             }
             case 'attack': {
