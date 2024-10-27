@@ -4,15 +4,15 @@ export interface Coordinate {
 }
 
 export enum CellState {
-    Empty = "empty",
-    Ship = "ship",
-    Hit = "hit",
-    Miss = "miss",
+    Empty = 'empty',
+    Ship = 'ship',
+    Hit = 'hit',
+    Miss = 'miss',
 }
 
 export type GameBoard = CellState[][];
 
-export type ShipType = "small" | "medium" | "large" | "huge";
+export type ShipType = 'small' | 'medium' | 'large' | 'huge';
 
 export interface Ship {
     id: string;
@@ -42,4 +42,8 @@ export interface GameState {
     players: Map<string, Player>;
     rooms: Map<string, Room>;
     winnerTable: Player[];
+}
+
+export interface Message {
+    type: 'reg' | 'create_room' | 'add_user_to_room' | 'add_ships' | 'attack' | 'randomAttack';
 }
