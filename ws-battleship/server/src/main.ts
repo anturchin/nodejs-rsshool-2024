@@ -8,9 +8,10 @@ export class BattleShipServer {
     private readonly server: http.Server;
     private readonly port: number;
     private readonly connections: Set<WebSocket> = new Set();
-    private readonly logger = new Logger(BattleShipServer.name);
+    private readonly logger: Logger;
 
-    constructor() {
+    constructor(logger: Logger) {
+        this.logger = logger;
         this.port = parseInt(process.env.PORT || '3000');
         this.server = http.createServer(this.createHttpServer.bind(this));
         this.serverRun();
@@ -61,4 +62,4 @@ export class BattleShipServer {
     }
 }
 
-new BattleShipServer();
+new BattleShipServer(new Logger(BattleShipServer.name));
