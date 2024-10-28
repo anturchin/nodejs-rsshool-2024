@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { GameState, Message, Player, Room, UserToRoom } from './common/interfaces';
+import { AddShip, GameState, Message, Player, Room, UserToRoom } from './common/interfaces';
 import { Logger } from './common/logger';
 import { registrationHandle } from './handlers/registration.handle';
 import { createRoot } from './handlers/create-room.handle';
@@ -10,6 +10,7 @@ import { sendUpdateRoom } from './handlers/send-update-room.handle';
 import { sendUpdateWinners } from './handlers/send-update-winners.handle';
 import { createGame } from './handlers/create-game.handle';
 import { getIdPlayerAndRoom } from './helpers';
+import { startGame } from './handlers/start-game.handle';
 
 export class BattleShipGameServer {
     private readonly wss: WebSocketServer;
@@ -112,20 +113,36 @@ export class BattleShipGameServer {
             connections: this.connectedClients,
         });
 
-        createGame({
-            room,
-            idPlayer,
-            logger: this.logger,
-            connections: this.connectedClients,
-        });
+        if (room.players.length === 2) {
+            createGame({
+                room,
+                idPlayer,
+                logger: this.logger,
+                connections: this.connectedClients,
+            });
+        }
     }
 
     private addShips(ws: WebSocket, message: Message): void {
+        const { ships, gameId, indexPlayer } = JSON.parse(message.data) as AddShip;
+
         addShip({
             logger: this.logger,
-            message,
+            message: { ships, gameId, indexPlayer },
             ws,
             gameState: this.gameState,
+            connections: this.connectedClients,
+        });
+
+        const room = this.gameState.rooms.get(gameId);
+        if (!room) {
+            this.logger.warn(`Комната с ID: ${gameId} не найдена.`);
+            return;
+        }
+        startGame({
+            indexPlayer,
+            room,
+            logger: this.logger,
             connections: this.connectedClients,
         });
     }

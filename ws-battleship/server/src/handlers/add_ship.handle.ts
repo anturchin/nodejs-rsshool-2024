@@ -5,16 +5,16 @@ import { Logger } from '../common/logger';
 
 type AddShipProps = {
     ws: WebSocket;
-    message: Message;
+    message: AddShip;
     gameState: GameState;
     connections: Map<WebSocket, string>;
     logger: Logger;
 };
 
 export const addShip = ({ connections, logger, gameState, ws, message }: AddShipProps): void => {
-    const { ships, gameId, indexPlayer } = JSON.parse(message.data) as AddShip;
+    const { ships, gameId, indexPlayer } = message;
 
-    const room = Array.from(gameState.rooms.values()).find((room) => room.id === gameId);
+    const room = gameState.rooms.get(gameId);
     if (!room) {
         logger.warn(`Комната с ID: ${gameId} не найдена.`);
         return;
