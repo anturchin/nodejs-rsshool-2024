@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { AddShip, GameState, Message, Player, Room, UserToRoom } from './common/interfaces';
+import { AddShip, Attack, GameState, Message, Player, Room, UserToRoom } from './common/interfaces';
 import { Logger } from './common/logger';
 import { registrationHandle } from './handlers/registration.handle';
 import { createRoot } from './handlers/create-room.handle';
@@ -12,6 +12,7 @@ import { createGame } from './handlers/create-game.handle';
 import { getIdPlayerAndRoom } from './helpers';
 import { startGame } from './handlers/start-game.handle';
 import { sendTurnUpdate } from './handlers/send-turn-update.handle';
+import { attack } from './handlers/attack.handle';
 
 export class BattleShipGameServer {
     private readonly wss: WebSocketServer;
@@ -165,6 +166,44 @@ export class BattleShipGameServer {
         });
     }
 
+    private attack(ws: WebSocket, message: Message): void {
+        const { gameId, y, x, currentPlayer } = JSON.parse(message.data) as Attack;
+
+        const room = this.gameState.rooms.get(gameId);
+        if (!room) {
+            this.logger.warn(`Комната с ID: ${gameId} не найдена.`);
+            return;
+        }
+
+        if (room.currentPlayerId !== currentPlayer) {
+            this.logger.warn(`Неправильный игрок делает ход в комнате с ID: ${gameId}.`);
+            return;
+        }
+
+        const player = room.players.find((p) => p.id === currentPlayer);
+        if (!player) {
+            this.logger.warn(`Игрок с ID: ${currentPlayer} не найден в комнате с ID: ${gameId}.`);
+            return;
+        }
+
+        attack({
+            y,
+            x,
+            currentPlayer,
+            room,
+            connections: this.connectedClients,
+            logger: this.logger,
+            player,
+        });
+
+        sendTurnUpdate({
+            currentPlayer,
+            room,
+            logger: this.logger,
+            connections: this.connectedClients,
+        });
+    }
+
     private handleRequest(ws: WebSocket, message: Message): void {
         switch (message.type) {
             case 'reg': {
@@ -184,7 +223,7 @@ export class BattleShipGameServer {
                 break;
             }
             case 'attack': {
-                console.log(JSON.stringify(message));
+                this.attack(ws, message);
                 break;
             }
             case 'randomAttack': {

@@ -14,7 +14,7 @@ export const createRoot = ({ gameState, playerId, logger }: CreateRoomProps): vo
         id: uuidv4(),
         players: [gameState.players.get(playerId) as Player],
         gameBoard: [],
-        turnIndex: 0,
+        currentPlayerId: playerId,
     };
 
     gameState.rooms.set(newRoom.id, newRoom);

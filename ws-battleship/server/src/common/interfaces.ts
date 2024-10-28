@@ -35,7 +35,7 @@ export interface Room {
     id: string;
     players: Player[];
     gameBoard: GameBoard;
-    turnIndex: number;
+    currentPlayerId: string;
 }
 
 export interface GameState {
@@ -81,4 +81,11 @@ export interface AddShip {
     gameId: string;
     ships: Ship[];
     indexPlayer: string;
+}
+
+export interface Attack {
+    gameId: string;
+    x: number;
+    y: number;
+    currentPlayer: string;
 }
