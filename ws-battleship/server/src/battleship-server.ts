@@ -11,6 +11,7 @@ import { sendUpdateWinners } from './handlers/send-update-winners.handle';
 import { createGame } from './handlers/create-game.handle';
 import { getIdPlayerAndRoom } from './helpers';
 import { startGame } from './handlers/start-game.handle';
+import { sendTurnUpdate } from './handlers/send-turn-update.handle';
 
 export class BattleShipGameServer {
     private readonly wss: WebSocketServer;
@@ -139,8 +140,25 @@ export class BattleShipGameServer {
             this.logger.warn(`Комната с ID: ${gameId} не найдена.`);
             return;
         }
+
+        const playersWithShips = room.players.filter((player) => player.ships.length > 0);
+
+        if (playersWithShips.length < 2) {
+            this.logger.warn(
+                `Недостаточно игроков с добавленными кораблями в комнате с ID: ${room.id}.`
+            );
+            return;
+        }
+
         startGame({
             indexPlayer,
+            room,
+            logger: this.logger,
+            connections: this.connectedClients,
+        });
+
+        sendTurnUpdate({
+            currentPlayer: indexPlayer,
             room,
             logger: this.logger,
             connections: this.connectedClients,
@@ -166,6 +184,7 @@ export class BattleShipGameServer {
                 break;
             }
             case 'attack': {
+                console.log(JSON.stringify(message));
                 break;
             }
             case 'randomAttack': {

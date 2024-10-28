@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 
-import { GameState, Room } from '../common/interfaces';
+import { GameState, Player, Room } from '../common/interfaces';
 import { Logger } from '../common/logger';
 
 type IdPlayerAndRoom = {
@@ -11,6 +11,10 @@ type IdPlayerAndRoom = {
     gameState: GameState;
 };
 
+type GetClientProps = {
+    player: Player;
+    connections: Map<WebSocket, string>;
+};
 export const getIdPlayerAndRoom = ({
     ws,
     connectedClients,
@@ -36,4 +40,8 @@ export const getIdPlayerAndRoom = ({
     }
 
     return { idPlayer, room };
+};
+
+export const getClient = ({ player, connections }: GetClientProps) => {
+    return [...connections.entries()].find(([ws, id]) => id === player.id)?.[0];
 };

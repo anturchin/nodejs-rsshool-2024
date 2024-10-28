@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 
 import { Logger } from '../common/logger';
 import { Room, Ship } from '../common/interfaces';
+import { getClient } from '../helpers';
 
 type StartGameProps = {
     indexPlayer: string;
@@ -11,14 +12,8 @@ type StartGameProps = {
 };
 
 export const startGame = ({ indexPlayer, connections, logger, room }: StartGameProps): void => {
-    const playersWithShips = room.players.filter((player) => player.ships.length > 0);
-
-    if (playersWithShips.length < 2) {
-        logger.warn(`Недостаточно игроков с добавленными кораблями в комнате с ID: ${room.id}.`);
-        return;
-    }
     room.players.forEach((player) => {
-        const client = Array.from(connections.entries()).find(([ws, id]) => id === player.id)?.[0];
+        const client = getClient({ player, connections });
         if (client) {
             const message = {
                 type: 'start_game',

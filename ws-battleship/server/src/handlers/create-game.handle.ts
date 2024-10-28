@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 
 import { Player, Room } from '../common/interfaces';
 import { Logger } from '../common/logger';
+import { getClient } from '../helpers';
 
 type CreateGameProps = {
     connections: Map<WebSocket, string>;
@@ -23,9 +24,7 @@ export const createGame = ({ connections, logger, room, idPlayer }: CreateGamePr
             id: 0,
         };
 
-        const playerWs = Array.from(connections.keys()).find(
-            (ws) => connections.get(ws) === player.id
-        );
+        const playerWs = getClient({ player, connections });
         if (playerWs) {
             playerWs.send(JSON.stringify(res));
             logger.info(
