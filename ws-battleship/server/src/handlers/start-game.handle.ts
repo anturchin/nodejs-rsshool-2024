@@ -11,7 +11,6 @@ type StartGameProps = {
 };
 
 export const startGame = ({ indexPlayer, connections, logger, room }: StartGameProps): void => {
-
     const playersWithShips = room.players.filter((player) => player.ships.length > 0);
 
     if (playersWithShips.length < 2) {
