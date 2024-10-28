@@ -28,13 +28,13 @@ export interface Player {
     name: string;
     password: string;
     wins: number;
+    ships: Ship[];
 }
 
 export interface Room {
     id: string;
     players: Player[];
     gameBoard: GameBoard;
-    ships: Ship[];
     turnIndex: number;
 }
 
@@ -62,17 +62,23 @@ export interface Message {
     data: string;
 }
 
-export type PlayerResResponse = {
+export interface PlayerResResponse {
     type: 'reg';
     data: string;
     id: number;
-};
+}
 
-export type PlayerReqResponse = {
+export interface PlayerReqResponse {
     name: string;
     password: string;
-};
+}
 
-export type UserToRoom = {
+export interface UserToRoom {
     indexRoom: string;
-};
+}
+
+export interface AddShip {
+    gameId: string;
+    ships: Ship[];
+    indexPlayer: string;
+}

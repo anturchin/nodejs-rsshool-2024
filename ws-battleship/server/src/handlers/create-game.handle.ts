@@ -1,31 +1,30 @@
 import WebSocket from 'ws';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Player, Room } from '../common/interfaces';
 import { Logger } from '../common/logger';
 
 type CreateGameProps = {
-    connection: Map<WebSocket, string>;
+    connections: Map<WebSocket, string>;
+    logger: Logger;
     room: Room;
     idPlayer: string;
-    logger: Logger;
 };
 
-export const createGame = ({ connection, room, idPlayer, logger }: CreateGameProps): void => {
-    const idGame = uuidv4();
-
-    const res = {
-        type: 'create_game',
-        data: JSON.stringify({
-            idGame,
-            idPlayer,
-        }),
-        id: 0,
-    };
+export const createGame = ({ connections, logger, room, idPlayer }: CreateGameProps): void => {
+    const idGame = room.id;
 
     room.players.forEach((player: Player) => {
-        const playerWs = Array.from(connection.keys()).find(
-            (ws) => connection.get(ws) === player.id
+        const res = {
+            type: 'create_game',
+            data: JSON.stringify({
+                idGame,
+                idPlayer: player.id,
+            }),
+            id: 0,
+        };
+
+        const playerWs = Array.from(connections.keys()).find(
+            (ws) => connections.get(ws) === player.id
         );
         if (playerWs) {
             playerWs.send(JSON.stringify(res));

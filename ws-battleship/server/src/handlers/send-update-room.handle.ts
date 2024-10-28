@@ -4,12 +4,12 @@ import { GameState, Room } from '../common/interfaces';
 import { Logger } from '../common/logger';
 
 type UpdateRoomProps = {
-    connection: Map<WebSocket, string>;
+    connections: Map<WebSocket, string>;
     gameState: GameState;
     logger: Logger;
 };
 
-export const sendUpdateRoom = ({ connection, gameState, logger }: UpdateRoomProps): void => {
+export const sendUpdateRoom = ({ connections, gameState, logger }: UpdateRoomProps): void => {
     const roomsWithSinglePlayer = [...gameState.rooms.values()].filter(
         (room) => room.players.length === 1
     );
@@ -36,8 +36,7 @@ export const sendUpdateRoom = ({ connection, gameState, logger }: UpdateRoomProp
     logger.info(
         `Отправка обновленного списка комнат с одним игроком, количество: ${roomsWithSinglePlayer.length}`
     );
-
-    for (const client of connection.keys()) {
+    for (const client of connections.keys()) {
         client.send(JSON.stringify(updateRoomData));
     }
 };

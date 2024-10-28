@@ -21,31 +21,28 @@ export const createPlayer = ({
     logger,
     connection,
 }: CreateUser): void => {
-    try {
-        const newPlayer: Player = {
-            id: uuidv4(),
-            name: name,
-            password: password,
-            wins: 0,
-        };
+    const newPlayer: Player = {
+        id: uuidv4(),
+        name: name,
+        password: password,
+        ships: [],
+        wins: 0,
+    };
 
-        gameState.players.set(newPlayer.id, newPlayer);
-        connection.set(ws, newPlayer.id);
+    gameState.players.set(newPlayer.id, newPlayer);
+    connection.set(ws, newPlayer.id);
 
-        const res: PlayerResResponse = {
-            type: 'reg',
-            data: JSON.stringify({
-                name,
-                index: newPlayer.id,
-                error: false,
-                errorText: `Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`,
-            }),
-            id: 0,
-        };
-        logger.info(`Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`);
+    const res: PlayerResResponse = {
+        type: 'reg',
+        data: JSON.stringify({
+            name,
+            index: newPlayer.id,
+            error: false,
+            errorText: `Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`,
+        }),
+        id: 0,
+    };
+    logger.info(`Игрок зарегистрирован: ${newPlayer.name} с ID: ${newPlayer.id}`);
 
-        ws.send(JSON.stringify(res));
-    } catch (e) {
-        if (e instanceof Error) logger.error(e.message);
-    }
+    ws.send(JSON.stringify(res));
 };
