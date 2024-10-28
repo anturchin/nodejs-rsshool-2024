@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 
-import { AddShip, GameState, Message, Ship } from '../common/interfaces';
+import { AddShip, CellState, GameState } from '../common/interfaces';
 import { Logger } from '../common/logger';
 
 type AddShipProps = {
@@ -13,6 +13,8 @@ type AddShipProps = {
 
 export const addShip = ({ connections, logger, gameState, ws, message }: AddShipProps): void => {
     const { ships, gameId, indexPlayer } = message;
+
+    console.log(JSON.stringify({ indexPlayer, ships }));
 
     const room = gameState.rooms.get(gameId);
     if (!room) {
@@ -27,17 +29,32 @@ export const addShip = ({ connections, logger, gameState, ws, message }: AddShip
     }
 
     ships.forEach((shipData) => {
-        const ship: Ship = {
+        const { position, direction, length, type } = shipData;
+        console.log(`Добавление корабля: ${type} в позицию ${JSON.stringify(position)} с направлением ${direction ? 'вертикально' : 'горизонтально'}`);
+
+        for (let i = 0; i < length; i++) {
+            const x = direction ? position.x : position.x + i;
+            const y = direction ? position.y + i : position.y;
+
+            player.gameBoard[x][y] = CellState.Ship;
+            console.log(`Размещён корабль на координатах: (${x}, ${y})`);
+        }
+
+        player.ships.push({
             id: indexPlayer,
             hitPositions: [],
-            position: shipData.position,
-            direction: shipData.direction,
-            length: shipData.length,
-            type: shipData.type,
-        };
-        player.ships.push(ship);
-        logger.info(
-            `Корабль типа "${ship.type}" добавлен игроку с ID: ${indexPlayer} в комнате с ID: ${gameId}.`
-        );
+            position,
+            direction,
+            length,
+            type,
+        });
     });
+
+    console.log('Игровое поле после размещения кораблей:');
+    player.gameBoard.forEach((row, rowIndex) => {
+        console.log(`Ряд ${rowIndex}: ${JSON.stringify(row)}`);
+    });
+
+    player.ready = true;
+    logger.info(`Игрок с ID: ${indexPlayer} готов к началу игры.`);
 };

@@ -13,7 +13,6 @@ export const createRoot = ({ gameState, playerId, logger }: CreateRoomProps): vo
     const newRoom: Room = {
         id: uuidv4(),
         players: [gameState.players.get(playerId) as Player],
-        gameBoard: [],
         currentPlayerId: playerId,
     };
 

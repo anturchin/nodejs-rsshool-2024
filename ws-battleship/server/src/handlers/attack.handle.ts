@@ -7,7 +7,7 @@ import { getClient } from '../helpers';
 type AttackProps = {
     x: number;
     y: number;
-    currentPlayer: string;
+    indexPlayer: string;
     logger: Logger;
     room: Room;
     connections: Map<WebSocket, string>;
@@ -46,7 +46,7 @@ const markSurroundingCellsAsMiss = ({ gameBoard, ship }: MarkSurroundingCellsAsM
 };
 
 export const attack = ({
-    currentPlayer,
+    indexPlayer,
     x,
     y,
     logger,
@@ -54,11 +54,11 @@ export const attack = ({
     connections,
     player,
 }: AttackProps): void => {
-    const targetCellState = room.gameBoard[y][x];
+    const targetCellState = player.gameBoard[y][x];
     let status: 'miss' | 'killed' | 'shot';
 
     if (targetCellState === CellState.Ship) {
-        room.gameBoard[y][x] = CellState.Hit;
+        player.gameBoard[y][x] = CellState.Hit;
         status = 'shot';
 
         const ship = player.ships.find((s) =>
@@ -69,11 +69,11 @@ export const attack = ({
             ship.hitPositions.push({ x, y });
             if (ship.hitPositions.length === ship.length) {
                 status = 'killed';
-                markSurroundingCellsAsMiss({ gameBoard: room.gameBoard, ship });
+                markSurroundingCellsAsMiss({ gameBoard: player.gameBoard, ship });
             }
         }
     } else {
-        room.gameBoard[y][x] = CellState.Miss;
+        player.gameBoard[y][x] = CellState.Miss;
         status = 'miss';
     }
 
@@ -81,7 +81,7 @@ export const attack = ({
         type: 'attack',
         data: JSON.stringify({
             position: { x, y },
-            currentPlayer,
+            indexPlayer,
             status,
         }),
     };

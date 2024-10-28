@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'ws';
 
-import { GameState, Player, PlayerResResponse } from '../common/interfaces';
+import { CellState, GameBoard, GameState, Player, PlayerResResponse } from '../common/interfaces';
 import { Logger } from '../common/logger';
 
 type CreateUser = {
@@ -21,12 +21,15 @@ export const createPlayer = ({
     logger,
     connection,
 }: CreateUser): void => {
+
     const newPlayer: Player = {
         id: uuidv4(),
         name: name,
         password: password,
         ships: [],
         wins: 0,
+        gameBoard: Array.from({ length: 10 }, () => Array(10).fill(CellState.Empty)) as GameBoard,
+        ready: false,
     };
 
     gameState.players.set(newPlayer.id, newPlayer);

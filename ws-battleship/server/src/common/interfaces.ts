@@ -29,12 +29,13 @@ export interface Player {
     password: string;
     wins: number;
     ships: Ship[];
+    gameBoard: GameBoard;
+    ready: boolean;
 }
 
 export interface Room {
     id: string;
     players: Player[];
-    gameBoard: GameBoard;
     currentPlayerId: string;
 }
 
@@ -87,5 +88,5 @@ export interface Attack {
     gameId: string;
     x: number;
     y: number;
-    currentPlayer: string;
+    indexPlayer: string;
 }

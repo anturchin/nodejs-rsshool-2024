@@ -99,9 +99,14 @@ export class BattleShipGameServer {
             connectedClients: this.connectedClients,
         });
         if (!playerAndRoom) {
+            this.logger.warn(
+                `Не удалось найти игрока или комнату для добавления пользователя. Room ID: ${indexRoom}`
+            );
             return;
         }
         const { room, idPlayer } = playerAndRoom;
+        this.logger.info(`Добавление игрока c ID: ${idPlayer} в комнату с ID: ${room.id}`);
+
         addUserToRoom({
             room,
             idPlayer,
@@ -159,7 +164,7 @@ export class BattleShipGameServer {
         });
 
         sendTurnUpdate({
-            currentPlayer: indexPlayer,
+            indexPlayer: room.currentPlayerId,
             room,
             logger: this.logger,
             connections: this.connectedClients,
@@ -167,7 +172,9 @@ export class BattleShipGameServer {
     }
 
     private attack(ws: WebSocket, message: Message): void {
-        const { gameId, y, x, currentPlayer } = JSON.parse(message.data) as Attack;
+        const { gameId, y, x, indexPlayer } = JSON.parse(message.data) as Attack;
+
+        console.dir({ gameId, y, x, indexPlayer });
 
         const room = this.gameState.rooms.get(gameId);
         if (!room) {
@@ -175,21 +182,21 @@ export class BattleShipGameServer {
             return;
         }
 
-        if (room.currentPlayerId !== currentPlayer) {
+        if (room.currentPlayerId !== indexPlayer) {
             this.logger.warn(`Неправильный игрок делает ход в комнате с ID: ${gameId}.`);
             return;
         }
 
-        const player = room.players.find((p) => p.id === currentPlayer);
+        const player = room.players.find((p) => p.id === indexPlayer);
         if (!player) {
-            this.logger.warn(`Игрок с ID: ${currentPlayer} не найден в комнате с ID: ${gameId}.`);
+            this.logger.warn(`Игрок с ID: ${indexPlayer} не найден в комнате с ID: ${gameId}.`);
             return;
         }
 
         attack({
             y,
             x,
-            currentPlayer,
+            indexPlayer,
             room,
             connections: this.connectedClients,
             logger: this.logger,
@@ -197,7 +204,7 @@ export class BattleShipGameServer {
         });
 
         sendTurnUpdate({
-            currentPlayer,
+            indexPlayer,
             room,
             logger: this.logger,
             connections: this.connectedClients,

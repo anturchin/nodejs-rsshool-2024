@@ -12,6 +12,13 @@ type StartGameProps = {
 };
 
 export const startGame = ({ indexPlayer, connections, logger, room }: StartGameProps): void => {
+    const allPlayersReady = room.players.every((player) => player.ready);
+
+    if (!allPlayersReady) {
+        logger.warn(`Не все игроки готовы в комнате с ID: ${room.id}. Игра не может начаться.`);
+        return;
+    }
+
     room.players.forEach((player) => {
         const client = getClient({ player, connections });
         if (client) {
@@ -24,7 +31,7 @@ export const startGame = ({ indexPlayer, connections, logger, room }: StartGameP
                         length: ship.length,
                         type: ship.type,
                     })),
-                    currentPlayerIndex: indexPlayer,
+                    currentPlayerIndex: room.currentPlayerId,
                 }),
                 id: 0,
             };
