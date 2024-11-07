@@ -1,0 +1,14 @@
+{
+  "name": "ws-battleship",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+     "dev": "concurrently \"npm run dev --prefix server\" \"npm run start --prefix client\""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
